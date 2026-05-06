@@ -1,0 +1,14 @@
+# Negeer omgevingsvariabelen (API keys en wachtwoorden)
+.env
+
+# Negeer gedownloade Node.js modules (deze map is gigantisch)
+node_modules/
+
+# Negeer logbestanden
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Negeer besturingssysteem gegenereerde bestanden
+.DS_Store
+Thumbs.db

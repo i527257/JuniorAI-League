@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Groepslid - Junior AI League</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+        #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; margin-bottom: 10px; background: #f9f9f9; }
+        .ai-message { color: blue; margin-bottom: 10px; }
+        .user-message { color: gray; margin-bottom: 10px; font-style: italic; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background: green; color: white; border: none; border-radius: 5px; }
+        .is-listening { background: red; }
+    </style>
+</head>
+<body>
+
+    <h1>🧠 Jouw AI Groepslid</h1>
+    <p>Klik op start en begin met brainstormen. Ik luister lokaal mee!</p>
+    
+    <button id="startBtn">Start met meeluisteren</button>
+    <p id="status">Status: Wachten...</p>
+
+    <div id="chat"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
