@@ -3,25 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Groepslid - Junior AI League</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
-        #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; margin-bottom: 10px; background: #f9f9f9; }
-        .ai-message { color: blue; margin-bottom: 10px; }
-        .user-message { color: gray; margin-bottom: 10px; font-style: italic; }
-        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background: green; color: white; border: none; border-radius: 5px; }
-        .is-listening { background: red; }
-    </style>
+    <title>Junior AI League - Platform</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>🧠 Jouw AI Groepslid</h1>
-    <p>Klik op start en begin met brainstormen. Ik luister lokaal mee!</p>
-    
-    <button id="startBtn">Start met meeluisteren</button>
-    <p id="status">Status: Wachten...</p>
+    <nav class="sidebar">
+        <div class="logo">
+            <h2>🚀 Junior AI</h2>
+            <p>Jouw AI Toolkit</p>
+        </div>
+        <ul class="nav-links">
+            <li class="active" onclick="openTab('fase-context')">🧠 1. Probleem & Context</li>
+            <li onclick="openTab('fase-oplossing')">💡 2. Oplossing Bedenken</li>
+            <li onclick="openTab('fase-finale')">🎤 3. Presentatie & Finale</li>
+            <li onclick="openTab('fase-prototype')">🛠️ 4. Prototype Bouwen</li>
+        </ul>
+    </nav>
 
-    <div id="chat"></div>
+    <main class="content">
+        
+        <section id="fase-context" class="tab-content active">
+            <div class="card header-card">
+                <h1>Fase 1: Context & Probleem</h1>
+                <p>Wat is het probleem dat we gaan oplossen? Brainstorm hardop en leg jullie ideeën vast.</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card tool-card">
+                    <h3>🎙️ Live Spraakcoach</h3>
+                    <p>De AI luistert mee en geeft tips als jullie vastlopen.</p>
+                    <div class="controls" style="margin-bottom: 15px;">
+                        <button id="startBtn" class="btn primary">Start met meeluisteren</button>
+                        <span id="status" class="status-badge">Wachten...</span>
+                    </div>
+                    <div id="chat" class="chat-box"></div>
+                </div>
+
+                <div class="card tool-card">
+                    <h3>🗺️ Co-creatie Mindmap</h3>
+                    <p>Typ een woord. De AI zoekt er een plaatje bij en denkt af en toe mee!</p>
+                    
+                    <div class="input-group" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <input type="text" id="mindmapInput" placeholder="Bijv: Plastic flessen..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ccc;">
+                        <button id="addNodeBtn" class="btn primary">Voeg toe</button>
+                    </div>
+
+                    <div id="mindmap-canvas" style="display: flex; flex-wrap: wrap; gap: 15px; padding: 20px; background: #f9f9f9; border-radius: 15px; min-height: 250px; align-content: flex-start;">
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="fase-oplossing" class="tab-content">
+            <div class="card header-card">
+                <h1>Fase 2: De Oplossing</h1>
+                <p>Tijd om jullie beste ideeën uit te werken en te onderbouwen.</p>
+            </div>
+            <div class="card tool-card">
+                <h3>📝 Tekst Analyse & Advies</h3>
+                <textarea placeholder="Plak hier het concept van jullie oplossing..."></textarea>
+                <button class="btn primary mt-10">Vraag AI om feedback</button>
+            </div>
+        </section>
+
+        <section id="fase-finale" class="tab-content">
+            <div class="card header-card">
+                <h1>Fase 3: Finale & Presentatie</h1>
+                <p>Overtuig de jury! Laat de AI je helpen met je pitch.</p>
+            </div>
+            <div class="card tool-card grid-2">
+                <div class="sub-tool">
+                    <h3>🗣️ Pitch Oefenen</h3>
+                    <p>Spreek je pitch in en de AI let op je tempo en overtuigingskracht.</p>
+                    <button class="btn secondary">Oefen Pitch</button>
+                </div>
+                <div class="sub-tool">
+                    <h3>❓ Veelgestelde Vragen</h3>
+                    <p>Laat de AI kritische jury-vragen bedenken, zodat jullie je kunnen voorbereiden.</p>
+                    <button class="btn secondary">Genereer Jury-vragen</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="fase-prototype" class="tab-content">
+            <div class="card header-card">
+                <h1>Fase 4: Prototype</h1>
+                <p>Kies hoe jullie het idee tot leven brengen.</p>
+            </div>
+            <div class="prototype-grid">
+                <div class="card text-center">🎨 Poster Ontwerpen</div>
+                <div class="card text-center">💻 App of Website</div>
+                <div class="card text-center">🎮 Game Bedenken</div>
+                <div class="card text-center">🎵 Liedje Schrijven</div>
+            </div>
+        </section>
+
+    </main>
 
     <script src="script.js"></script>
 </body>
