@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { OpenAI } = require('openai');
+const { spawn } = require('child_process');
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -12,79 +14,103 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Pas hier wekelijks de casus aan!
-const huidigeCasus = "Bedenk een oplossing voor de plastic soep in de oceaan.";
-
-// --- 1. ROUTE VOOR DE SPRAAKCOACH ---
-app.post('/api/chat', async (req, res) => {
-    const { transcript } = req.body;
-
+// --- 1. ROUTE: AI ADVISEUR ---
+app.post('/api/propose-layout', async (req, res) => {
+    const { uitleg, leeftijd } = req.body;
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-4o-mini",
-            temperature: 0.7, 
             messages: [
-                {
-                    role: "system",
-                    content: `Je bent een gezellige, meedenkende coach voor kinderen (9-15 jaar) in de Junior AI League.
-                    De casus van vandaag: ${huidigeCasus}.
-                    
-                    Jouw gedragsregels:
-                    1. GEEF FEITEN & UITLEG: Als ze vragen hoe iets werkt (bijv. "hoe wordt plastic gemaakt?") leg het dan kort en simpel uit! Je mag feiten, geschiedenis en achtergrondinfo gewoon delen.
-                    2. DEEL BRONNEN: Als ze om een bron vragen of als ze ergens over twijfelen, noem dan 1 of 2 echte, bekende websites (zoals WNF.nl, National Geographic, Milieudefensie of Wikipedia) waar ze het kunnen opzoeken.
-                    3. NIET DE EINDOPLOSSING VOORZEGGEN: Je mag ze helpen met informatie, maar het *uiteindelijke idee* om de casus op te lossen moeten ze zelf verzinnen.
-                    4. STOP MET EINDELOZE VRAGEN: Val niet in herhaling. Als ze een goed idee hebben (zoals statiegeld of tassen hergebruiken), prijs ze dan gewoon! Zeg: "Geniaal idee, schrijf die zeker op!" Laat ze daarna weer lekker zelf praten.
-                    5. GRENZEN BEWAKEN: Kinderen gaan je testen. Als ze grapjes maken over geweld, aanslagen, drugs of andere ongepaste dingen, wees dan niet te serieus, maar kap het vlot af. Bijv: "Haha, laten we de actiefilms even vergeten en weer focussen op de oceaan!"`
+                { 
+                    role: "system", 
+                    content: `Je bent een enthousiaste coach voor de Junior AI League. De gebruiker is ${leeftijd} jaar oud. Pas je taalgebruik hierop aan. Geef 4 titels voor slides. Antwoord ALTIJD alleen in dit JSON-formaat: {"slides": [{"nr": 1, "titel": "..."}]}` 
                 },
-                {
-                    role: "user",
-                    content: transcript
-                }
-            ]
+                { role: "user", content: `Onze oplossing is: ${uitleg}` }
+            ],
+            response_format: { type: "json_object" }
         });
-
-        res.json({ reply: response.choices[0].message.content });
+        res.json(JSON.parse(response.choices[0].message.content));
     } catch (error) {
-        console.error("Fout bij OpenAI (Chat):", error);
-        res.status(500).json({ error: "Er ging iets mis bij het nadenken." });
+        console.error("OpenAI Fout:", error);
+        res.status(500).json({ error: "Fout bij de AI verbinding" });
     }
 });
 
-// --- 2. ROUTE VOOR DE MINDMAP ---
-app.post('/api/mindmap', async (req, res) => {
-    const { woord, alleWoorden } = req.body;
+// --- 2. ROUTE: LIVE UNSPLASH PREVIEW (Veilig via de achterkant) ---
+app.get('/api/unsplash-image', async (req, res) => {
+    const { keyword } = req.query;
+    if (!keyword) return res.status(400).send('Keyword mist');
 
     try {
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            response_format: { type: "json_object" }, 
-            messages: [
-                {
-                    role: "system",
-                    content: `Je bent een mindmap-assistent voor kinderen die brainstormen over: ${huidigeCasus}.
-                    De kinderen hebben net het woord "${woord}" toegevoegd. De hele lijst tot nu toe is: ${alleWoorden.join(", ")}.
-                    
-                    Jouw taak:
-                    1. Kies EEN perfecte, duidelijke Emoji die het woord "${woord}" visualiseert.
-                    2. KIJK of er een heel belangrijk woord of invalshoek ontbreekt in hun lijst (denk aan kosten, regels, materialen, doelgroep). 
-                       - Zo ja, geef dan 1 sterk, kort nieuw woord terug als suggestie.
-                       - Zo nee (of als de lijst nog te kort is), geef dan exact het woord "geen" terug.
-                    
-                    Je MOET antwoorden in dit exacte JSON formaat:
-                    {"emoji": "🌍", "aiSuggestie": "nieuw woord of 'geen'"}
-                    `
-                }
-            ]
+        const response = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(keyword)}&per_page=1`, {
+            headers: { 'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` }
         });
+        const data = await response.json();
 
-        res.json(JSON.parse(response.choices[0].message.content));
-    } catch (error) {
-        console.error("Fout bij OpenAI (Mindmap):", error);
-        res.status(500).json({ error: "Kon geen mindmap data genereren." });
+        if (data.results && data.results.length > 0) {
+            // Stuur de browser direct door naar de officiële Unsplash fotolink
+            res.redirect(data.results[0].urls.regular);
+        } else {
+            // Fallback als er niks gevonden wordt
+            res.redirect('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500'); 
+        }
+    } catch (err) {
+        console.error("🚨 Unsplash API Fout:", err.message);
+        res.status(500).send('Kon Unsplash afbeelding niet ophalen');
     }
+});
+
+// --- 3. ROUTE: POWERPOINT EXPORT ---
+app.post('/api/export-pptx', async (req, res) => {
+    const publicDir = path.join(__dirname, 'public');
+    const { proposal, stijl } = req.body;
+
+    console.log("📸 Unsplash links verzamelen voor de PowerPoint export...");
+
+    // Loop door alle slides heen en verzamel eerst de echte Unsplash afbeeldings-URL's
+    for (let slide of proposal) {
+        if (slide.afbeelding && slide.afbeelding.trim() !== "") {
+            try {
+                const response = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(slide.afbeelding)}&per_page=1`, {
+                    headers: { 'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` }
+                });
+                const data = await response.json();
+                if (data.results && data.results.length > 0) {
+                    slide.img_url = data.results[0].urls.regular; // Plak de directe URL in de slide data
+                }
+            } catch (e) {
+                console.error(`🚨 Kon Unsplash link voor slide ${slide.nr} niet ophalen:`, e.message);
+            }
+        }
+    }
+
+    // Start Python op en stuur de verrijkte data door
+    const pythonProcess = spawn('python', ['-u', 'generator.py', publicDir]);
+    
+    let output = "";
+    let errorOutput = "";
+    
+    pythonProcess.stdout.on('data', (data) => output += data.toString());
+    pythonProcess.stderr.on('data', (data) => errorOutput += data.toString());
+    
+    pythonProcess.on('close', (code) => {
+        if (code === 0 && output.trim().includes("presentatie.pptx")) {
+            console.log("✅ PowerPoint succesvol gemaakt met echte Unsplash foto's!");
+            res.json({ success: true, url: 'presentatie.pptx' });
+        } else {
+            console.error("❌ VERBORGEN PYTHON MELDING:\n", output);
+            res.status(500).json({ success: false, error: output || errorOutput });
+        }
+    });
+
+    pythonProcess.stdin.write(JSON.stringify({ proposal, stijl }));
+    pythonProcess.stdin.end();
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server draait op http://localhost:${PORT}`);
+    console.log(`--------------------------------------------------`);
+    console.log(`🚀 Junior AI League Server succesvol gestart!`);
+    console.log(`🌍 Open je browser op: http://localhost:${PORT}`);
+    console.log(`--------------------------------------------------`);
 });
