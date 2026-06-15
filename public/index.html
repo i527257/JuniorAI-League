@@ -5,18 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Junior AI League - Platform</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 </head>
 <body>
 
     <nav class="sidebar">
         <div class="logo">
             <h2>🚀 Junior AI</h2>
-            <p>Jouw AI Toolkit</p>
+            <p>Team Dashboard</p>
         </div>
         <ul class="nav-links">
             <li class="active" onclick="openTab('fase-context')">🧠 1. Probleem & Context</li>
             <li onclick="openTab('fase-oplossing')">💡 2. Oplossing Bedenken</li>
-            <li onclick="openTab('fase-finale')">🎤 3. Presentatie & Finale</li>
+            <li onclick="openTab('fase-finale')">🎤 3. Finale & Presentatie</li>
             <li onclick="openTab('fase-prototype')">🛠️ 4. Prototype Bouwen</li>
         </ul>
     </nav>
@@ -70,32 +71,55 @@
         <section id="fase-finale" class="tab-content">
             <div class="card header-card">
                 <h1>Fase 3: Finale & Presentatie</h1>
-                <p>Overtuig de jury! Laat de AI je helpen met je pitch.</p>
+                <p>Overtuig de jury! Laat de AI je helpen om jullie idee fantastisch te presenteren.</p>
             </div>
+            
+            <div class="card tool-card">
+                <h3>✨ Finale Generator</h3>
+                <p>Wat is jullie ultieme oplossing geworden? Typ het hieronder kort in, en kies hoe jullie het willen presenteren!</p>
+                <textarea id="finaleInput" placeholder="Bijv: Wij hebben bedacht dat we drones gaan gebruiken die plastic opsporen via camera's..."></textarea>
+                
+                <div class="controls mt-10" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <button id="genPitchBtn" class="btn primary">📝 Maak een Pitch-script</button>
+                    <button id="genSongBtn" class="btn secondary">🎵 Schrijf een Liedje/Rap</button>
+                    <button id="genPptxBtn" class="btn secondary">📊 Maak PowerPoint</button>
+                </div>
+                
+                <div id="finaleOutput" style="margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 15px; border: 2px dashed var(--primary-color); display: none; white-space: pre-wrap; font-size: 16px; line-height: 1.6;"></div>
+            </div>
+
             <div class="card tool-card grid-2">
                 <div class="sub-tool">
                     <h3>🗣️ Pitch Oefenen</h3>
                     <p>Spreek je pitch in en de AI let op je tempo en overtuigingskracht.</p>
-                    <button class="btn secondary">Oefen Pitch</button>
+                    <button id="oefenPitchBtn" class="btn secondary">🗣️ Oefen Pitch</button>
                 </div>
                 <div class="sub-tool">
-                    <h3>❓ Veelgestelde Vragen</h3>
-                    <p>Laat de AI kritische jury-vragen bedenken, zodat jullie je kunnen voorbereiden.</p>
-                    <button class="btn secondary">Genereer Jury-vragen</button>
+                    <h3>❓ Jury Simulator</h3>
+                    <p>Laat de AI 3 kritische vragen bedenken over jullie oplossing, zodat jullie je kunnen voorbereiden.</p>
+                    <button id="genJuryBtn" class="btn secondary">Genereer Jury-vragen</button>
                 </div>
             </div>
         </section>
 
         <section id="fase-prototype" class="tab-content">
             <div class="card header-card">
-                <h1>Fase 4: Prototype</h1>
-                <p>Kies hoe jullie het idee tot leven brengen.</p>
+                <h1>Fase 4: Prototype Bouwen</h1>
+                <p>Kies hoe jullie het idee tot leven brengen. AI maakt een tof stappenplan of concept voor jullie ontwerp!</p>
             </div>
-            <div class="prototype-grid">
-                <div class="card text-center">🎨 Poster Ontwerpen</div>
-                <div class="card text-center">💻 App of Website</div>
-                <div class="card text-center">🎮 Game Bedenken</div>
-                <div class="card text-center">🎵 Liedje Schrijven</div>
+            
+            <div class="card tool-card">
+                <h3>🛠️ Prototype Bedenken</h3>
+                <p>Typ jullie idee kort in (of we gebruiken automatisch het idee uit Fase 3).</p>
+                <textarea id="prototypeInput" placeholder="Bijv: Een drone die plastic flessen zoekt..."></textarea>
+                
+                <div class="controls mt-10" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+                    <button id="protoPosterBtn" class="btn primary">🎨 Poster Ontwerpen</button>
+                    <button id="protoAppBtn" class="btn secondary">💻 App / Website</button>
+                    <button id="protoGameBtn" class="btn secondary">🎮 Game Bedenken</button>
+                </div>
+                
+                <div id="prototypeOutput" style="margin-top: 20px; padding: 20px; background: #E2E8F0; border-radius: 15px; display: none; white-space: pre-wrap; font-size: 16px; line-height: 1.6;"></div>
             </div>
         </section>
 
