@@ -3,180 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Junior AI League - Platform</title>
+    <title>Junior AI League - Platform Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 </head>
 <body>
 
-    <nav class="sidebar">
-        <div class="logo">
-            <h2>🚀 Junior AI</h2>
-            <p>Team Dashboard</p>
-        </div>
-        <ul class="nav-links">
-            <li class="active" onclick="openTab('fase-context')">🧠 1. Probleem & Context</li>
-            <li onclick="openTab('fase-oplossing')">💡 2. Oplossing Bedenken</li>
-            <li onclick="openTab('fase-finale')">🎤 3. Finale & Presentatie</li>
-            <li onclick="openTab('fase-prototype')">🛠️ 4. Prototype Bouwen</li>
-            <li onclick="openTab('fase-presentatie')">📊 5. Export PowerPoint</li>
-        </ul>
-    </nav>
-
-    <main class="content">
-        
-        <section id="fase-context" class="tab-content active">
-            <div class="card header-card">
-                <h1>Fase 1: Context & Probleem</h1>
-                <p>Wat is het probleem dat we gaan oplossen? Brainstorm hardop en leg jullie ideeën vast.</p>
-            </div>
-            <div class="grid-2">
-                <div class="card tool-card">
-                    <h3>🎙️ Live Spraakcoach</h3>
-                    <p>De AI luistert mee en geeft tips als jullie vastlopen.</p>
-                    <div class="controls" style="margin-bottom: 15px;">
-                        <button id="startBtn" class="btn primary">Start meeluisteren</button>
-                        <span id="status" class="status-badge">Wachten...</span>
-                    </div>
-                    <div id="chat" class="chat-box"></div>
-                </div>
-                <div class="card tool-card">
-                    <h3>🗺️ Co-creatie Mindmap</h3>
-                    <p>Typ een woord. De AI zoekt er een plaatje bij en denkt af en toe mee!</p>
-                    <div class="input-group" style="display: flex; gap: 10px; margin-bottom: 20px;">
-                        <input type="text" id="mindmapInput" placeholder="Typ een idee...">
-                        <button id="addNodeBtn" class="btn primary">Voeg toe</button>
-                    </div>
-                    <div id="mindmap-canvas" style="display: flex; flex-wrap: wrap; gap: 15px; padding: 20px; background: #f9f9f9; border-radius: 15px; min-height: 250px; align-content: flex-start;"></div>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🚀</span>
+                <div class="logo-text">
+                    <h2>Junior AI</h2>
+                    <p>Team Dashboard</p>
                 </div>
             </div>
-        </section>
+            <ul class="nav-links">
+                <li class="active" onclick="openTab('fase-context')">
+                    <span class="nav-icon">🧠</span>
+                    <span class="nav-text">1. Probleem & Context</span>
+                </li>
+                <li onclick="openTab('fase-oplossing')">
+                    <span class="nav-icon">💡</span>
+                    <span class="nav-text">2. Oplossing Bedenken</span>
+                </li>
+                <li onclick="openTab('fase-finale')">
+                    <span class="nav-icon">🎤</span>
+                    <span class="nav-text">3. Finale & Presentatie</span>
+                </li>
+                <li onclick="openTab('fase-prototype')">
+                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-text">4. Prototype Bouwen</span>
+                </li>
+                <li onclick="openTab('fase-presentatie')">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">5. Export PowerPoint</span>
+                </li>
+            </ul>
+        </nav>
 
-        <section id="fase-oplossing" class="tab-content">
-            <div class="card header-card">
-                <h1>Fase 2: De Oplossing</h1>
-                <p>Tijd om jullie beste ideeën uit te werken en te onderbouwen.</p>
-            </div>
-            <div class="card tool-card">
-                <h3>📝 Tekst Analyse & Advies</h3>
-                <textarea id="oplossingText" placeholder="Plak hier het concept van jullie oplossing..." style="width:100%; height:150px; padding:15px; border-radius:10px; border:1px solid #ddd;"></textarea>
-                <button id="oplossingFeedbackBtn" class="btn primary" style="margin-top:10px;">Vraag AI om feedback</button>
-            </div>
-        </section>
-
-        <section id="fase-finale" class="tab-content">
-            <div class="card header-card">
-                <h1>Fase 3: Finale & Presentatie</h1>
-                <p>Overtuig de jury! Laat de AI je helpen om jullie idee fantastisch te presenteren.</p>
-            </div>
+        <main class="content">
             
-            <div class="card tool-card">
-                <h3>✨ Finale Generator</h3>
-                <p>Wat is jullie ultieme oplossing geworden? Typ het hieronder kort in, en kies hoe jullie het willen presenteren!</p>
-                <textarea id="finaleInput" placeholder="Bijv: Wij hebben bedacht dat we drones gaan gebruiken die plastic opsporen via camera's..."></textarea>
-                
-                <div class="controls mt-10" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
-                    <button id="genPitchBtn" class="btn primary">📝 Maak een Pitch-script</button>
-                    <button id="genSongBtn" class="btn secondary">🎵 Schrijf een Liedje/Rap</button>
-                    <button id="genPptxBtn" class="btn secondary">📊 Maak PowerPoint</button>
+            <section id="fase-context" class="tab-content active">
+                <div class="card header-card">
+                    <h1>Fase 1: Context & Probleem</h1>
+                    <p>Wat is het problem dat we gaan oplossen? Brainstorm hardop en leg jullie ideeën vast.</p>
                 </div>
-                
-                <div id="finaleOutput" style="margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 15px; border: 2px dashed var(--primary-color); display: none; white-space: pre-wrap; font-size: 16px; line-height: 1.6;"></div>
-            </div>
-
-            <div class="card tool-card grid-2">
-                <div class="sub-tool">
-                    <h3>🗣️ Pitch Oefenen</h3>
-                    <p>Spreek je pitch in en de AI let op je tempo en overtuigingskracht.</p>
-                    <button id="oefenPitchBtn" class="btn secondary">🗣️ Oefen Pitch</button>
-                </div>
-                <div class="sub-tool">
-                    <h3>❓ Jury Simulator</h3>
-                    <p>Laat de AI 3 kritische vragen bedenken over jullie oplossing, zodat jullie je kunnen voorbereiden.</p>
-                    <button id="genJuryBtn" class="btn secondary">Genereer Jury-vragen</button>
-                </div>
-            </div>
-        </section>
-
-        <section id="fase-prototype" class="tab-content">
-            <div class="card header-card">
-                <h1>Fase 4: Prototype Bouwen</h1>
-                <p>Kies hoe jullie het idee tot leven brengen. AI maakt een tof stappenplan of concept voor jullie ontwerp!</p>
-            </div>
-            
-            <div class="card tool-card">
-                <h3>🛠️ Prototype Bedenken</h3>
-                <p>Typ jullie idee kort in (of we gebruiken automatisch het idee uit Fase 3).</p>
-                <textarea id="prototypeInput" placeholder="Bijv: Een drone die plastic flessen zoekt..."></textarea>
-                
-                <div class="controls mt-10" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
-                    <button id="protoPosterBtn" class="btn primary">🎨 Poster Ontwerpen</button>
-                    <button id="protoAppBtn" class="btn secondary">💻 App / Website</button>
-                    <button id="protoGameBtn" class="btn secondary">🎮 Game Bedenken</button>
-                    <button id="protoSongBtn" class="btn secondary">🎵 Liedje / Rap Bedenken</button>
-                </div>
-                
-                <div id="prototypeOutput" style="margin-top: 20px; padding: 20px; background: #E2E8F0; border-radius: 15px; display: none; white-space: pre-wrap; font-size: 16px; line-height: 1.6;"></div>
-            </div>
-        </section>
-
-        <section id="fase-presentatie" class="tab-content">
-            <div class="card header-card">
-                <h1>Fase 5: Presentatie Bouwen</h1>
-                <p>Stel hier zelf je slides samen. Gebruik de AI-zijbalk voor tips en kies je favoriete ontwerpstijl!</p>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-                
-                <div class="card tool-card">
-                    <h3>📂 Jouw Slides</h3>
-                    <div id="slide-list" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; min-height: 50px;">
-                        <p id="empty-msg" style="color: #888; font-style: italic;">Nog geen slides toegevoegd...</p>
+                <div class="grid-2">
+                    <div class="card tool-card">
+                        <h3>🎙️ Live Spraakcoach</h3>
+                        <p>De AI luistert mee en geeft tips als jullie vastlopen.</p>
+                        <div class="speech-controls">
+                            <button id="startBtn" class="btn primary">Start meeluisteren</button>
+                            <span id="status" class="status-badge">Wachten...</span>
+                        </div>
+                        <div id="chat" class="chat-box"></div>
                     </div>
                     
-                    <button id="addSlideBtn" class="btn secondary" style="width: 100%;">➕ Nieuwe Slide Toevoegen</button>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-                    
-                    <button id="exportPptxBtn" class="btn primary" style="width: 100%; padding: 15px;">🚀 Exporteer naar PowerPoint</button>
-                    <div id="downloadLinkContainer" style="margin-top: 15px;"></div>
+                    <div class="card tool-card">
+                        <h3>🗺️ Co-creatie Mindmap</h3>
+                        <p>Typ een woord. De AI zoekt er een plaatje bij en denkt af en toe mee!</p>
+                        <div class="mindmap-input-group">
+                            <input type="text" id="mindmapInput" placeholder="Typ een idee, bijv: Plastic soep...">
+                            <button id="addNodeBtn" class="btn primary">Voeg toe</button>
+                        </div>
+                        <div id="mindmap-canvas" class="mindmap-canvas"></div>
+                    </div>
+                </div>
+                
+                <div class="next-step-wrapper">
+                    <button class="btn btn-next" onclick="openTab('fase-oplossing')">Volgende stap: Oplossing Bedenken ➔</button>
+                </div>
+            </section>
+
+            <section id="fase-oplossing" class="tab-content">
+                <div class="card header-card">
+                    <h1>Fase 2: De Oplossing</h1>
+                    <p>Tijd om jullie beste ideeën uit te werken en te onderbouwen.</p>
+                </div>
+                <div class="card tool-card oplossing-card">
+                    <h3>📝 Tekst Analyse & Advies</h3>
+                    <p>Typ of plak hier jullie oplossing. De AI checkt of het duidelijk is.</p>
+                    <textarea id="oplossingText" placeholder="Plak hier het concept van jullie oplossing..."></textarea>
+                    <div class="mt-10">
+                        <button id="oplossingFeedbackBtn" class="btn primary">Vraag AI om feedback</button>
+                    </div>
                 </div>
 
-                <div class="card tool-card" style="background: #f8f9fa; border-left: 4px solid #007bff;">
-                    <h3>🎨 Presentatie Stijl</h3>
-                    <div style="margin-bottom: 15px;">
-                        <label for="presentation-style" style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px;">Kies een thema voor de export:</label>
-                        <select id="presentation-style" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
-                            <option value="modern">Modern & Clean (Wit/Blauw)</option>
-                            <option value="futuristic">Futuristisch (Donker/Neon)</option>
-                            <option value="playful">Vrolijk & Creatief (Geel/Kleurrijk)</option>
-                            <option value="professional">Zakelijk (Grijs/Donkerblauw)</option>
-                        </select>
-                    </div>
+                <div class="next-step-wrapper">
+                    <button class="btn primary btn-next" onclick="openTab('fase-finale')">Volgende stap: Finale & Presentatie ➔</button>
+                </div>
+            </section>
 
-                    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
-
-                    <h3>💡 AI Advies</h3>
-                    <div style="margin-bottom: 15px;">
-                        <label for="user-age" style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px;">Hoe oud zijn jullie?</label>
-                        <select id="user-age" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
-                            <option value="10">10 jaar</option>
-                            <option value="11">11 jaar</option>
-                            <option value="12" selected>12 jaar</option>
-                            <option value="13">13 jaar</option>
-                            <option value="14">14 jaar</option>
-                            <option value="15">15 jaar</option>
-                        </select>
+            <section id="fase-finale" class="tab-content">
+                <div class="card header-card">
+                    <h1>Fase 3: Finale & Presentatie</h1>
+                    <p>Overtuig de jury! Laat de AI je helpen om jullie idee fantastisch te presenteren.</p>
+                </div>
+                
+                <div class="card tool-card generator-card">
+                    <h3>✨ Finale Generator</h3>
+                    <p>Wat is jullie ultieme oplossing geworden? Typ het hieronder kort in, en kies hoe jullie het willen presenteren!</p>
+                    <textarea id="finaleInput" placeholder="Bijv: Wij hebben drones bedacht die plastic opsporen via speciale camera's..."></textarea>
+                    
+                    <div class="generator-controls">
+                        <button id="genPitchBtn" class="btn primary">📝 Maak een Pitch-script</button>
+                        <button id="genSongBtn" class="btn secondary">🎵 Schrijf een Liedje/Rap</button>
+                        <button id="genPptxBtn" class="btn secondary">📊 Maak PowerPoint basis</button>
                     </div>
-                    <div id="ai-advice-content" style="font-size: 0.9rem; line-height: 1.4; min-height: 100px; border-top: 1px solid #eee; padding-top: 10px;">
-                        <p style="color: #666;"><i>Klik op de knop om te overleggen met je coach.</i></p>
-                    </div>
-                    <button id="getAiAdviceBtn" class="btn secondary" style="width: 100%; margin-top: 10px; font-size: 0.8rem;">Vraag advies</button>
+                    
+                    <div id="finaleOutput" class="ai-output-box"></div>
                 </div>
 
-            </div>
-        </section>
-    </main>
+                <div class="grid-2">
+                    <div class="card tool-card sub-tool">
+                        <h3>🗣️ Pitch Oefenen</h3>
+                        <p>Spreek je pitch in en de AI let op je tempo en overtuigingskracht.</p>
+                        <button id="oefenPitchBtn" class="btn secondary btn-full">🗣️ Oefen Pitch</button>
+                    </div>
+                    <div class="card tool-card sub-tool">
+                        <h3>❓ Jury Simulator</h3>
+                        <p>Laat de AI 3 kritische vragen bedenken, zodat jullie je goed kunnen voorbereiden.</p>
+                        <button id="genJuryBtn" class="btn secondary btn-full">Genereer Jury-vragen</button>
+                    </div>
+                </div>
+
+                <div class="next-step-wrapper">
+                    <button class="btn primary btn-next" onclick="openTab('fase-prototype')">Volgende stap: Prototype Bouwen ➔</button>
+                </div>
+            </section>
+
+            <section id="fase-prototype" class="tab-content">
+                <div class="card header-card">
+                    <h1>Fase 4: Prototype Bouwen</h1>
+                    <p>Kies hoe jullie het idee tot leven brengen. AI maakt een tof stappenplan!</p>
+                </div>
+                
+                <div class="card tool-card prototype-card">
+                    <h3>🛠️ Prototype Bedenken</h3>
+                    <p>Typ jullie idee kort in (of we gebruiken automatisch het idee uit Fase 3).</p>
+                    <textarea id="prototypeInput" placeholder="Bijv: Een drone die plastic flessen zoekt..."></textarea>
+                    
+                    <div class="prototype-controls">
+                        <button id="protoPosterBtn" class="btn primary">🎨 Poster Ontwerpen</button>
+                        <button id="protoAppBtn" class="btn secondary">💻 App / Website</button>
+                        <button id="protoGameBtn" class="btn secondary">🎮 Game Bedenken</button>
+                        <button id="protoSongBtn" class="btn secondary">🎵 Liedje Bedenken</button>
+                    </div>
+                    
+                    <div id="prototypeOutput" class="ai-output-box prototype-output"></div>
+                </div>
+
+                <div class="next-step-wrapper">
+                    <button class="btn primary btn-next" onclick="openTab('fase-presentatie')">Laatste stap: Presentatie Maken ➔</button>
+                </div>
+            </section>
+
+            <section id="fase-presentatie" class="tab-content">
+                <div class="card header-card">
+                    <h1>Fase 5: Presentatie Bouwen</h1>
+                    <p>Stel hier zelf je slides samen. Gebruik de AI-zijbalk voor tips en kies je stijl!</p>
+                </div>
+
+                <div class="ppt-builder-grid">
+                    <div class="card tool-card slides-main">
+                        <h3>📂 Jouw Slides</h3>
+                        <div id="slide-list" class="slide-list">
+                            <p id="empty-msg" class="empty-message">Nog geen slides toegevoegd... Klik op de knop hieronder!</p>
+                        </div>
+                        
+                        <button id="addSlideBtn" class="btn secondary btn-full">➕ Nieuwe Slide Toevoegen</button>
+                        <div class="divider"></div>
+                        <button id="exportPptxBtn" class="btn primary btn-full btn-large">🚀 Exporteer naar PowerPoint (.pptx)</button>
+                        <div id="downloadLinkContainer"></div>
+                    </div>
+
+                    <aside class="card tool-card ai-sidebar">
+                        <div class="sidebar-block">
+                            <h3>🎨 Ontwerpstijl</h3>
+                            <label for="presentation-style">Kies een thema voor de export:</label>
+                            <select id="presentation-style">
+                                <option value="modern">Modern & Clean (Wit/Blauw)</option>
+                                <option value="futuristic">Futuristisch (Donker/Neon)</option>
+                                <option value="playful">Vrolijk & Creatief (Geel/Kleurrijk)</option>
+                                <option value="professional">Zakelijk (Grijs/Donkerblauw)</option>
+                            </select>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="sidebar-block">
+                            <h3>💡 AI Coach</h3>
+                            <label for="user-age">Hoe oud zijn jullie?</label>
+                            <select id="user-age">
+                                <option value="10">10 jaar</option>
+                                <option value="11">11 jaar</option>
+                                <option value="12" selected>12 jaar</option>
+                                <option value="13">13 jaar</option>
+                                <option value="14">14 jaar</option>
+                                <option value="15">15 jaar</option>
+                            </select>
+                            
+                            <div id="ai-advice-content" class="ai-advice-box">
+                                <p><i>Klik op de knop om te overleggen met je coach.</i></p>
+                            </div>
+                            <button id="getAiAdviceBtn" class="btn secondary btn-full">Vraag advies</button>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <script src="script.js"></script>
 </body>
