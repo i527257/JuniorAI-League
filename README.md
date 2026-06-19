@@ -31,7 +31,7 @@ Het platform is verdeeld in vijf overzichtelijke fases, waarbij AI de kinderen o
 * **Backend:** Node.js, Express.js
 * **AI Modellen (Tekst & Logica):** OpenAI API (`gpt-4o-mini`)
 * **AI Modellen (Beeld & Geluid):** Replicate API (`meta/musicgen` & `black-forest-labs/flux-schnell`)
-* **Foto API:** Unsplash API (met Safe Search filter en automatische NL-naar-EN vertaalslag)
+* **Foto API:** Unsplash API
 * **Extra Libraries:** `pptxgenjs` (voor frontend PowerPoint generatie), `dotenv`, `cors`.
 
 ---
