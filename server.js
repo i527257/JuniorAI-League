@@ -162,16 +162,14 @@ app.post('/api/mindmap', async (req, res) => {
 });
  
 // ==========================================
-// 3. ROUTE VOOR DE FINALE GENERATOR (Pitch/Liedje)
+// 3. ROUTE VOOR DE FINALE GENERATOR (Liedje)
 // ==========================================
 app.post('/api/finale', async (req, res) => {
     const { idee, type } = req.body;
  
     let promptRegels = "";
  
-  if (type === "pitch") {
-      promptRegels = `Schrijf een enthousiaste, overtuigende presentatie (pitch) van maximaal 1 minuut. Verdeel het duidelijk in: 1. Een pakkende opening. 2. De uitleg van het idee. 3. Een sterke afsluiting.`;
-    } else if (type === "liedje") {
+  if (type === "liedje") {
         promptRegels = `Schrijf een kort, vrolijk en stoer liedje (bijvoorbeeld een rap of popnummer) over dit idee. Maak 2 coupletten en een catchy refrein dat makkelijk mee te zingen is. Gebruik rijm!`;
   }
  

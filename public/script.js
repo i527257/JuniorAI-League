@@ -394,35 +394,11 @@ function tekenBubbel(tekst, icoon, cssClass) {
 }
 
 // ==========================================
-// 4. FINALE: PITCH & JURY (Fase 3)
+// 4. FINALE: JURY (Fase 3)
 // ==========================================
 const finaleInput = document.getElementById('finaleInput');
-const genPitchBtn = document.getElementById('genPitchBtn');
 const genJuryBtn = document.getElementById('genJuryBtn');
 const finaleOutput = document.getElementById('finaleOutput');
-
-// PITCH
-genPitchBtn.addEventListener('click', async () => {
-    const idee = finaleInput.value.trim();
-    if (!idee) return alert("Typ eerst jullie fantastische idee in het vakje!");
-
-    finaleOutput.style.display = "block";
-    finaleOutput.innerHTML = "<i>AI is de pennen aan het slijpen en schrijft jullie pitch... ⏳</i>";
-
-    try {
-        const response = await fetch('/api/finale', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ idee: idee, type: "pitch" })
-        });
-        
-        const data = await response.json();
-        if (data.error) finaleOutput.innerHTML = `<b style="color: red;">${data.error}</b>`;
-        else finaleOutput.innerHTML = data.resultaat.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-    } catch (error) {
-        finaleOutput.innerHTML = `<b style="color: red;">Oeps, de verbinding is even weg! Probeer het nog eens.</b>`;
-    }
-});
 
 // JURY
 genJuryBtn.addEventListener('click', async () => {
