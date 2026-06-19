@@ -31,14 +31,19 @@
             </div>
 
             <div class="grid-2">
-                <div class="card tool-card">
-                    <h3>🎙️ Live Spraakcoach</h3>
-                    <p>De AI luistert mee en geeft tips als jullie vastlopen.</p>
+                <div class="card tool-card" style="text-align: center;">
+                    <h3>🎙️ Coach Nova</h3>
+                    <p>Jouw persoonlijke AI-coach luistert mee en geeft tips!</p>
+                    
+                    <div class="avatar-container">
+                         <img id="novaAvatar" src="nova-praat.png" alt="Coach Nova" class="avatar-img">
+                    </div>
+
                     <div class="controls" style="margin-bottom: 15px;">
                         <button id="startBtn" class="btn primary">Start met meeluisteren</button>
                         <span id="status" class="status-badge">Wachten...</span>
                     </div>
-                    <div id="chat" class="chat-box"></div>
+                    <div id="chat" class="chat-box" style="text-align: left;"></div>
                 </div>
 
                 <div class="card tool-card">
@@ -59,12 +64,32 @@
         <section id="fase-oplossing" class="tab-content">
             <div class="card header-card">
                 <h1>Fase 2: De Oplossing</h1>
-                <p>Tijd om jullie beste ideeën uit te werken en te onderbouwen.</p>
+                <p>Tijd om jullie beste ideeën uit te werken en te onderbouwen met de hulp van Coach Storm!</p>
             </div>
-            <div class="card tool-card">
-                <h3>📝 Tekst Analyse & Advies</h3>
-                <textarea placeholder="Plak hier het concept van jullie oplossing..."></textarea>
-                <button class="btn primary mt-10">Vraag AI om feedback</button>
+            
+            <div class="grid-2">
+                <!-- STORM AVATAR -->
+                <div class="card tool-card" style="text-align: center;">
+                    <h3>🤖 Coach Storm</h3>
+                    <p>Onze expert stelt kritische vragen om jullie idee beter te maken.</p>
+                    
+                    <div class="avatar-container">
+                        <img id="stormAvatar" src="storm-stil.png" alt="Coach Storm" class="avatar-img" style="border-color: #FF5733;">
+                    </div>
+
+                    <div class="controls" style="margin-bottom: 15px;">
+                        <button id="startStormBtn" class="btn primary" style="background-color: #FF5733;">Overleg met Storm</button>
+                        <span id="stormStatus" class="status-badge">Wachten...</span>
+                    </div>
+                    <div id="stormChat" class="chat-box" style="text-align: left;"></div>
+                </div>
+
+                <!-- TEKST VAK -->
+                <div class="card tool-card">
+                    <h3>📝 Uiteindelijke Oplossing</h3>
+                    <p>Typ hier jullie uitgewerkte, definitieve idee op basis van het overleg.</p>
+                    <textarea placeholder="Plak hier het concept van jullie oplossing..."></textarea>
+                </div>
             </div>
         </section>
 

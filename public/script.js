@@ -19,6 +19,7 @@ function openTab(tabId) {
 const startBtn = document.getElementById('startBtn');
 const statusText = document.getElementById('status');
 const chatBox = document.getElementById('chat');
+const novaAvatar = document.getElementById('novaAvatar'); // AVATAR CONNECTIE
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -78,7 +79,7 @@ if (!SpeechRecognition) {
     };
 
     async function vraagHulpAanAI(transcript) {
-        statusText.innerText = "Status: AI denkt na...";
+        statusText.innerText = "Status: Coach Nova denkt na...";
         
         try {
             const response = await fetch('/api/chat', {
@@ -89,12 +90,13 @@ if (!SpeechRecognition) {
 
             const data = await response.json();
             
-            appendMessage("AI Coach: " + data.reply, "ai-message");
+            appendMessage("Coach Nova: " + data.reply, "ai-message");
+            fase1Notulen += "Team in Fase 1: " + transcript + " | Coach Nova antwoordde: " + data.reply + " | ";
             speak(data.reply); 
 
         } catch (error) {
             console.error("Fout:", error);
-            appendMessage("AI Coach: Oeps, verbinding weg.", "ai-message");
+            appendMessage("Coach Nova: Oeps, verbinding weg.", "ai-message");
             statusText.innerText = "Status: Gestopt.";
         }
     }
@@ -113,9 +115,16 @@ if (!SpeechRecognition) {
         beschikbareStemmen = window.speechSynthesis.getVoices();
     };
 
-    function speak(text) {
+function speak(text) {
         isSpeaking = true;
         recognition.stop(); 
+        
+        // 1. ZET AVATAR OP PRATEN (ANIMATIE & GIF AAN)
+        if (novaAvatar) {
+            // Dit is een tijdelijke pratende GIF om te testen hoe het werkt!
+            novaAvatar.src = "nova-praat.gif";
+            novaAvatar.classList.add("talking");
+        }
         
         const schoneTekst = text.replace(/[*#_]/g, "");
         const utterance = new SpeechSynthesisUtterance(schoneTekst);
@@ -142,9 +151,160 @@ if (!SpeechRecognition) {
         utterance.onend = () => {
             isSpeaking = false;
             statusText.innerText = "Status: Ik luister weer mee...";
+            
+            // 2. ZET AVATAR TERUG NAAR STIL (GIF UIT)
+            if (novaAvatar) {
+                // Dit is de stilstaande Coach Nova
+                novaAvatar.src = "nova-praat.png"; 
+                novaAvatar.classList.remove("talking");
+            }
+
             if (isListening) {
                 recognition.start(); 
             }
+        };
+
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+
+// ==========================================
+// 2.5 HET GEHEUGEN & COACH STORM (Fase 2)
+// ==========================================
+let fase1Notulen = ""; // Dit is het onzichtbare notitieblokje!
+
+const startStormBtn = document.getElementById('startStormBtn');
+const stormStatusText = document.getElementById('stormStatus');
+const stormChatBox = document.getElementById('stormChat');
+const stormAvatar = document.getElementById('stormAvatar');
+
+if (SpeechRecognition && startStormBtn) {
+    const stormRecognition = new SpeechRecognition();
+    stormRecognition.lang = 'nl-NL';
+    stormRecognition.continuous = true;
+    stormRecognition.interimResults = false;
+
+    let stormIsListening = false;
+    let stormIsSpeaking = false;
+    let stormSilenceTimer;
+    let stormVerzameldeTekst = "";
+
+    startStormBtn.addEventListener('click', () => {
+        if (stormIsListening) {
+            stormRecognition.stop();
+            startStormBtn.innerText = "Overleg met Storm";
+            startStormBtn.classList.remove("is-listening");
+            stormStatusText.innerText = "Status: Gestopt.";
+        } else {
+            stormRecognition.start();
+            startStormBtn.innerText = "Stop met luisteren";
+            startStormBtn.classList.add("is-listening");
+            stormStatusText.innerText = "Status: Storm luistert...";
+        }
+        stormIsListening = !stormIsListening;
+    });
+
+    stormRecognition.onresult = (event) => {
+        if (stormIsSpeaking) return;
+
+        const current = event.resultIndex;
+        let transcript = event.results[current][0].transcript.trim();
+
+        if (transcript.length < 2) return;
+
+        stormVerzameldeTekst += transcript + ". ";
+        appendStormMessage("Jullie: " + transcript, "user-message");
+
+        // Voeg het ook toe aan de notulen
+        fase1Notulen += "Fase 2 Team: " + transcript + " | ";
+
+        clearTimeout(stormSilenceTimer);
+        stormSilenceTimer = setTimeout(() => {
+            if (stormVerzameldeTekst.trim() !== "") {
+                vraagStormAanAI(stormVerzameldeTekst);
+                stormVerzameldeTekst = "";
+            }
+        }, 7000);
+    };
+
+    stormRecognition.onend = () => {
+        if (stormIsListening && !stormIsSpeaking) stormRecognition.start();
+    };
+
+    async function vraagStormAanAI(transcript) {
+        stormStatusText.innerText = "Status: Storm overdenkt dit...";
+        
+        try {
+            const response = await fetch('/api/chat-fase2', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    transcript: transcript,
+                    context: fase1Notulen // We sturen ALLES wat is gezegd stiekem mee!
+                })
+            });
+
+            const data = await response.json();
+            
+            fase1Notulen += "Storm: " + data.reply + " | ";
+            appendStormMessage("Coach Storm: " + data.reply, "ai-message");
+            speakStorm(data.reply); 
+
+        } catch (error) {
+            console.error("Fout:", error);
+            stormStatusText.innerText = "Status: Gestopt.";
+        }
+    }
+
+    function appendStormMessage(text, className) {
+        const div = document.createElement('div');
+        div.className = className;
+        div.innerText = text.replace(/[*#_]/g, ""); 
+        // We veranderen de AI kleur naar Storm's kleur (oranje/rood)
+        if (className === "ai-message") div.style.background = "#FF5733"; 
+        stormChatBox.appendChild(div);
+        stormChatBox.scrollTop = stormChatBox.scrollHeight;
+    }
+
+    function speakStorm(text) {
+        stormIsSpeaking = true;
+        stormRecognition.stop(); 
+        
+        if (stormAvatar) {
+            stormAvatar.src = "storm-praat.gif"; // De nieuwe animatie!
+            stormAvatar.classList.add("talking");
+        }
+        
+        const schoneTekst = text.replace(/[*#_]/g, "");
+        const utterance = new SpeechSynthesisUtterance(schoneTekst);
+        utterance.lang = 'nl-NL';
+        utterance.rate = 0.95; 
+        utterance.pitch = 0.6; // We maken de stem zwaarder door de pitch omlaag te halen!
+
+        const nlStemmen = window.speechSynthesis.getVoices().filter(stem => stem.lang.includes('nl'));
+        
+        // We zoeken specifiek naar een mannelijke stem
+        let manStem = nlStemmen.find(stem => 
+            stem.name.includes('Maarten') || 
+            stem.name.includes('Willem') || 
+            stem.name.includes('Bart') || 
+            stem.name.includes('Male') || 
+            stem.name.includes('Man')
+        );
+
+        if (manStem) utterance.voice = manStem;
+        else if (nlStemmen.length > 0) utterance.voice = nlStemmen[0];
+
+        utterance.onend = () => {
+            stormIsSpeaking = false;
+            stormStatusText.innerText = "Status: Storm luistert...";
+            
+            if (stormAvatar) {
+                stormAvatar.src = "storm-stil.png"; 
+                stormAvatar.classList.remove("talking");
+            }
+            if (stormIsListening) stormRecognition.start(); 
         };
 
         window.speechSynthesis.speak(utterance);
@@ -393,7 +553,7 @@ genPptxBtn.addEventListener('click', async () => {
 });
 
 // ==========================================
-// 7. PITCH OEFENEN LOGICA (VERBETERD: WACHT TOT JE KLAAR BENT)
+// 7. PITCH OEFENEN LOGICA 
 // ==========================================
 const oefenPitchBtn = document.getElementById('oefenPitchBtn');
 
@@ -406,7 +566,7 @@ if (oefenPitchBtn) {
     if (SpeechRecognition) {
         pitchRecognition = new SpeechRecognition();
         pitchRecognition.lang = 'nl-NL';
-        pitchRecognition.continuous = true; // Zorgt dat hij NIET zomaar stopt bij een adempauze!
+        pitchRecognition.continuous = true; 
         pitchRecognition.interimResults = false;
 
         pitchRecognition.onstart = () => {
@@ -415,12 +575,10 @@ if (oefenPitchBtn) {
         };
 
         pitchRecognition.onresult = (event) => {
-            // Elke keer als je een zin zegt, plakken we die achter de vorige
             const current = event.resultIndex;
             const transcript = event.results[current][0].transcript;
             verzameldePitchTekst += transcript + " ";
             
-            // Laat live op het scherm zien wat de AI tot nu toe heeft gehoord
             finaleOutput.innerHTML = `
                 <i>🎙️ Microfoon staat aan! Spreek je pitch in... (Klik op 'Stop & Beoordeel' als je helemaal klaar bent)</i><br><br>
                 <b>Jouw pitch tot nu toe:</b> "${verzameldePitchTekst}"
@@ -441,19 +599,17 @@ if (oefenPitchBtn) {
         }
 
         if (!isPitchRecording) {
-            // 1. START OPNEMEN
             isPitchRecording = true;
             verzameldePitchTekst = "";
             oefenPitchBtn.innerText = "⏹️ Stop & Beoordeel";
-            oefenPitchBtn.style.backgroundColor = "#ff4d4d"; // Maak knop opvallend rood
+            oefenPitchBtn.style.backgroundColor = "#ff4d4d"; 
             oefenPitchBtn.style.color = "white";
             pitchRecognition.start();
         } else {
-            // 2. STOP OPNEMEN EN STUUR NAAR JURY
             isPitchRecording = false;
             pitchRecognition.stop();
             oefenPitchBtn.innerText = "🗣️ Oefen Pitch";
-            oefenPitchBtn.style.backgroundColor = ""; // Reset knop kleur
+            oefenPitchBtn.style.backgroundColor = ""; 
             oefenPitchBtn.style.color = "";
 
             if (verzameldePitchTekst.trim().length < 5) {
@@ -461,7 +617,6 @@ if (oefenPitchBtn) {
                 return;
             }
 
-            // Stuur het hele verhaal door
             finaleOutput.innerHTML = `
                 <p><b>Jouw volledige pitch:</b> "${verzameldePitchTekst}"</p>
                 <i>AI Jury is je pitch aan het analyseren... 🧐</i>
@@ -472,7 +627,12 @@ if (oefenPitchBtn) {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        idee: `Hier is een pitch van een deelnemer. Geef kort, positief, maar kritisch feedback op de overtuigingskracht en the inhoud: "${verzameldePitchTekst}"` 
+                        idee: `Hier is een letterlijk uitgeschreven pitch van een deelnemer voor de Junior AI League. 
+                        Beoordeel de pitch kort en opbouwend op 2 onderdelen:
+                        1. INHOUD: Is het idee helder en sterk beargumenteerd?
+                        2. OVERTUIGING & ENTHOUSIASME: Bevat de tekst actieve en vlotte zinnen? Geef ze daarnaast altijd 1 praktische presentatietip mee over hun stemgebruik, enthousiasme of lichaamshouding (bijv: "Vergeet niet de jury aan te kijken!").
+                        
+                        De pitch tekst: "${verzameldePitchTekst}"` 
                     })
                 });
                 
@@ -500,7 +660,6 @@ const protoAppBtn = document.getElementById('protoAppBtn');
 const protoGameBtn = document.getElementById('protoGameBtn');
 const prototypeOutput = document.getElementById('prototypeOutput');
 
-// AANGEPAST: Helper functie om het idee op te halen (Fase 4 of Fase 3)
 function getIdeeInvoer() {
     let idee = prototypeInput.value.trim();
     if (!idee) {
@@ -510,14 +669,12 @@ function getIdeeInvoer() {
     return idee;
 }
 
-// AANGEPAST: Specifieke functie voor het genereren van the Poster AFBEELDING via Google Imagen
 if (protoPosterBtn) {
     protoPosterBtn.addEventListener('click', async () => {
         const idee = getIdeeInvoer();
         if (!idee) return alert("Typ eerst jullie fantastische idee in het vakje, of vul iets in bij Fase 3!");
 
         prototypeOutput.style.display = "block";
-        // Toon laadbericht
         prototypeOutput.innerHTML = "<i>AI-artiest is de verf aan het mengen en schildert jullie affiche... Dit duurt ongeveer 10 seconden. 🎨🖌️⏳</i>";
 
         try {
@@ -532,11 +689,10 @@ if (protoPosterBtn) {
             if (data.error) {
                 prototypeOutput.innerHTML = `<b style="color: red;">${data.error}</b>`;
             } else {
-                // Toon de gegenereerde Google Imagen afbeelding
                 prototypeOutput.innerHTML = `
                     <h3>🎨 Jullie AI Affiche Concept:</h3>
                     <img src="${data.audio_url}" alt="AI Gegenereerde Poster" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-top: 10px;">
-                    <p style="font-size: 14px; color: #666; margin-top: 10px;"><i>Dit is een concept gegenereerd door Imagen 3. Jullie kunnen dit als inspiratie gebruiken voor jullie eigen poster!</i></p>
+                    <p style="font-size: 14px; color: #666; margin-top: 10px;"><i>Dit is een concept. Jullie kunnen dit als inspiratie gebruiken voor jullie eigen poster!</i></p>
                 `;
             }
         } catch (error) {
@@ -546,7 +702,6 @@ if (protoPosterBtn) {
     });
 }
 
-// Oude logica voor App en Game (Tekst concepten) blijft bestaan
 async function genereerTekstPrototype(type) {
     const idee = getIdeeInvoer();
     if (!idee) return alert("Typ eerst jullie fantastische idee in het vakje, of vul iets in bij Fase 3!");
