@@ -52,3 +52,4 @@ Zorg dat je het volgende hebt geïnstalleerd en klaargezet:
 git clone [https://github.com/jouw-gebruikersnaam/JuniorAI-League.git](https://github.com/jouw-gebruikersnaam/JuniorAI-League.git)
 cd JuniorAI-League
 npm install
+pip install python-pptx
