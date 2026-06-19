@@ -16,7 +16,7 @@ const openai = new OpenAI({
 });
  
 // De casus van de week
-const huidigeCasus = "Bedenk een oplossing voor de plastic soep in de oceaan.";
+const huidigeCasus = "Bedenk een oplossing voor zwerfafval in Tilburg en hoe je dit kan voorkomen. Denk aan de oorzaken, gevolgen en mogelijke oplossingen.";
  
 // ==========================================
 // 1. ROUTE VOOR DE SPRAAKCOACH (Coach Nova - Fase 1)
