@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Junior AI League - Platform</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 </head>
 <body>
 
@@ -19,6 +18,7 @@
             <li onclick="openTab('fase-oplossing')">💡 2. Oplossing Bedenken</li>
             <li onclick="openTab('fase-finale')">🎤 3. Finale & Presentatie</li>
             <li onclick="openTab('fase-prototype')">🛠️ 4. Prototype Bouwen</li>
+            <li onclick="openTab('fase-presentatie')">📊 5. PowerPoint Bouwen</li>
         </ul>
     </nav>
 
@@ -99,12 +99,11 @@
             
             <div class="card tool-card">
                 <h3>✨ Finale Generator</h3>
-                <p>Wat is jullie ultieme oplossing geworden? Typ het hieronder kort in, en de AI maakt er een liedje of een strakke PowerPoint van voor tijdens jullie presentatie!</p>
+                <p>Wat is jullie ultieme oplossing geworden? Typ het hieronder kort in, en de AI maakt er een liedje van voor tijdens jullie presentatie!</p>
                 <textarea id="finaleInput" placeholder="Bijv: Wij hebben bedacht dat we drones gaan gebruiken die plastic opsporen via camera's..."></textarea>
                 
                 <div class="controls mt-10" style="display: flex; flex-wrap: wrap; gap: 10px;">
                     <button id="genSongBtn" class="btn primary">🎵 Schrijf een Liedje/Rap</button>
-                    <button id="genPptxBtn" class="btn secondary">📊 Maak PowerPoint</button>
                 </div>
                 
                 <div id="finaleOutput" style="margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 15px; border: 2px dashed var(--primary-color); display: none; white-space: pre-wrap; font-size: 16px; line-height: 1.6;"></div>
@@ -142,6 +141,63 @@
                 </div>
                 
                 <div id="prototypeOutput" style="margin-top: 20px; padding: 20px; background: #E2E8F0; border-radius: 15px; display: none; white-space: pre-wrap; font-size: 16px; line-height: 1.6;"></div>
+            </div>
+        </section>
+
+        <section id="fase-presentatie" class="tab-content">
+            <div class="card header-card">
+                <h1>Fase 5: Presentatie Bouwen</h1>
+                <p>Stel hier zelf je slides samen. Gebruik de AI-zijbalk voor tips en kies je favoriete ontwerpstijl!</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                
+                <div class="card tool-card">
+                    <h3>📂 Jouw Slides</h3>
+                    <div id="slide-list" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; min-height: 50px;">
+                        <p id="empty-msg" style="color: #888; font-style: italic;">Nog geen slides toegevoegd...</p>
+                    </div>
+                    
+                    <button id="addSlideBtn" class="btn secondary" style="width: 100%;">➕ Nieuwe Slide Toevoegen</button>
+                    
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                    
+                    <button id="exportPptxBtn" class="btn primary" style="width: 100%; padding: 15px;">🚀 Exporteer naar PowerPoint</button>
+                    <div id="downloadLinkContainer" style="margin-top: 15px;"></div>
+                </div>
+
+                <div class="card tool-card" style="background: #f8f9fa; border-left: 4px solid #007bff;">
+                    <h3>🎨 Presentatie Stijl</h3>
+                    <div style="margin-bottom: 15px;">
+                        <label for="presentation-style" style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px;">Kies een thema voor de export:</label>
+                        <select id="presentation-style" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                            <option value="modern">Modern & Clean (Wit/Blauw)</option>
+                            <option value="futuristic">Futuristisch (Donker/Neon)</option>
+                            <option value="playful">Vrolijk & Creatief (Geel/Kleurrijk)</option>
+                            <option value="professional">Zakelijk (Grijs/Donkerblauw)</option>
+                        </select>
+                    </div>
+
+                    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+
+                    <h3>💡 AI Advies</h3>
+                    <div style="margin-bottom: 15px;">
+                        <label for="user-age" style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px;">Hoe oud zijn jullie?</label>
+                        <select id="user-age" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                            <option value="10">10 jaar</option>
+                            <option value="11">11 jaar</option>
+                            <option value="12" selected>12 jaar</option>
+                            <option value="13">13 jaar</option>
+                            <option value="14">14 jaar</option>
+                            <option value="15">15 jaar</option>
+                        </select>
+                    </div>
+                    <div id="ai-advice-content" style="font-size: 0.9rem; line-height: 1.4; min-height: 100px; border-top: 1px solid #eee; padding-top: 10px;">
+                        <p style="color: #666;"><i>Klik op de knop om te overleggen met je coach.</i></p>
+                    </div>
+                    <button id="getAiAdviceBtn" class="btn secondary" style="width: 100%; margin-top: 10px; font-size: 0.8rem;">Vraag advies</button>
+                </div>
+
             </div>
         </section>
 

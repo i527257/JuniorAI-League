@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const { OpenAI } = require('openai');
 const Replicate = require('replicate');
+const { spawn } = require('child_process'); // TOEGEVOEGD VOOR POWERPOINT
+const path = require('path'); // TOEGEVOEGD VOOR POWERPOINT
  
 const app = express();
 app.use(cors());
@@ -23,62 +25,38 @@ app.post('/api/chat', async (req, res) => {
     const { transcript } = req.body;
  
     try {
- 
       const response = await openai.chat.completions.create({
- 
           model: "gpt-4o-mini",
- 
           temperature: 0.7, 
- 
           messages: [
- 
               {
-               
-    role: "system",
-               
-    content: `Je bent Coach Nova, een gezellige coach voor kinderen
+                role: "system",
+                content: `Je bent Coach Nova, een gezellige coach voor kinderen
 (9-15 jaar) in de Junior AI League.
-               
-    De casus van vandaag is: ${huidigeCasus}.
-               
-    
-               
-    JOUW BELANGRIJKSTE REGEL VOOR FASE 1:
-    Jullie gaan ALLEEN brainstormen over het PROBLEEM (de oorzaken en gevolgen). 
-    Je mag absoluut NIET vragen naar een oplossing, een uitvinding of een idee. Dat doen ze pas later in Fase 2!
-               
-    Jouw gedragsregels:
-               
-    1. FOCUS OP HET PROBLEEM: Als ze een vraag stellen, geef kort antwoord en stel een wedervraag over de oorzaak of het gevolg (bijv. "Hoe denk je dat het in zee komt?" of "Welke dieren hebben daar last van?").
-               
-    2. VRAAG NOOIT NAAR OPLOSSINGEN: Gebruik nooit zinnen als "Hoe gaan we dit oplossen?" of "Wat is jullie idee?".
-               
-    3. GEEF FEITEN & DEEL BRONNEN: Leg dingen simpel uit en noem bekende websites (zoals WNF.nl) als ze ergens over twijfelen.
-               
-    4. STOP MET EINDELOZE VRAGEN: Stel maximaal 1 korte wedervraag per keer.
-               
-    5. GRENZEN BEWAKEN: Kap ongepaste grappen (geweld, etc.) vlot en luchtig af.`
+                De casus van vandaag is: ${huidigeCasus}.
+                
+                JOUW BELANGRIJKSTE REGEL VOOR FASE 1:
+                Jullie gaan ALLEEN brainstormen over het PROBLEEM (de oorzaken en gevolgen). 
+                Je mag absoluut NIET vragen naar een oplossing, een uitvinding of een idee. Dat doen ze pas later in Fase 2!
+                
+                Jouw gedragsregels:
+                1. FOCUS OP HET PROBLEEM: Als ze een vraag stellen, geef kort antwoord en stel een wedervraag over de oorzaak of het gevolg (bijv. "Hoe denk je dat het in zee komt?" of "Welke dieren hebben daar last van?").
+                2. VRAAG NOOIT NAAR OPLOSSINGEN: Gebruik nooit zinnen als "Hoe gaan we dit oplossen?" of "Wat is jullie idee?".
+                3. GEEF FEITEN & DEEL BRONNEN: Leg dingen simpel uit en noem bekende websites (zoals WNF.nl) als ze ergens over twijfelen.
+                4. STOP MET EINDELOZE VRAGEN: Stel maximaal 1 korte wedervraag per keer.
+                5. GRENZEN BEWAKEN: Kap ongepaste grappen (geweld, etc.) vlot en luchtig af.`
                 },
- 
               {
- 
                   role: "user",
- 
                   content: transcript
- 
               }
- 
           ]
- 
       });
- 
  
       res.json({ reply: response.choices[0].message.content });
  
   } catch (error) {
- 
       console.error("Fout bij OpenAI (Chat):", error);
- 
       res.status(500).json({ error: "Er ging iets mis bij het nadenken." });
     }
 });
@@ -233,33 +211,92 @@ app.post('/api/jury', async (req, res) => {
 });
  
 // ==========================================
-// 5. ROUTE VOOR POWERPOINT INHOUD
+// 5. NIEUWE ROUTES VOOR POWERPOINT EXPORT (Fase 5)
 // ==========================================
-app.post('/api/pptx-data', async (req, res) => {
-  const { idee } = req.body;
- 
-  try {
-      const response = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
-          response_format: { type: "json_object" }, 
-          messages: [
-                {
-                role: "system",
-                content: `Je bent een expert in het maken presentaties voor kinderen. 
-                Maak een structuur voor een PowerPoint presentatie van 5 slides over dit idee: ${idee}.
-                Geef een JSON terug met een lijst genaamd 'slides'. 
-                Elke slide heeft een 'titel' en een lijst 'punten' (max 3 korte bullets per slide).
-                Slide 1: Titelpagina. Slide 2: Het Probleem. Slide 3: Onze Oplossing. Slide 4: Waarom AI? Slide 5: Afsluiting.`
-              }
-          ]
-      });
- 
-      res.json(JSON.parse(response.choices[0].message.content));
- 
-  } catch (error) {
-      console.error("Fout bij PowerPoint AI:", error);
-      res.status(500).json({ error: "Kon de presentatie niet voorbereiden." });
+app.post('/api/propose-layout', async (req, res) => {
+    const { uitleg, leeftijd } = req.body;
+    try {
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+                { 
+                    role: "system", 
+                    content: `Je bent een enthousiaste coach voor de Junior AI League. De gebruiker is ${leeftijd} jaar oud. Pas je taalgebruik hierop aan. Geef 4 titels voor slides. Antwoord ALTIJD alleen in dit JSON-formaat: {"slides": [{"nr": 1, "titel": "..."}]}` 
+                },
+                { role: "user", content: `Onze oplossing is: ${uitleg}` }
+            ],
+            response_format: { type: "json_object" }
+        });
+        res.json(JSON.parse(response.choices[0].message.content));
+    } catch (error) {
+        console.error("OpenAI Fout:", error);
+        res.status(500).json({ error: "Fout bij de AI verbinding" });
     }
+});
+
+app.get('/api/unsplash-image', async (req, res) => {
+    const { keyword } = req.query;
+    if (!keyword) return res.status(400).send('Keyword mist');
+
+    try {
+        const response = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(keyword)}&per_page=1`, {
+            headers: { 'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` }
+        });
+        const data = await response.json();
+
+        if (data.results && data.results.length > 0) {
+            res.redirect(data.results[0].urls.regular);
+        } else {
+            res.redirect('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500'); 
+        }
+    } catch (err) {
+        console.error("🚨 Unsplash API Fout:", err.message);
+        res.status(500).send('Kon Unsplash afbeelding niet ophalen');
+    }
+});
+
+app.post('/api/export-pptx', async (req, res) => {
+    const publicDir = path.join(__dirname, 'public');
+    const { proposal, stijl } = req.body;
+
+    console.log("📸 Unsplash links verzamelen voor de PowerPoint export...");
+
+    for (let slide of proposal) {
+        if (slide.afbeelding && slide.afbeelding.trim() !== "") {
+            try {
+                const response = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(slide.afbeelding)}&per_page=1`, {
+                    headers: { 'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` }
+                });
+                const data = await response.json();
+                if (data.results && data.results.length > 0) {
+                    slide.img_url = data.results[0].urls.regular; 
+                }
+            } catch (e) {
+                console.error(`🚨 Kon Unsplash link voor slide ${slide.nr} niet ophalen:`, e.message);
+            }
+        }
+    }
+
+    const pythonProcess = spawn('python', ['-u', 'generator.py', publicDir]);
+    
+    let output = "";
+    let errorOutput = "";
+    
+    pythonProcess.stdout.on('data', (data) => output += data.toString());
+    pythonProcess.stderr.on('data', (data) => errorOutput += data.toString());
+    
+    pythonProcess.on('close', (code) => {
+        if (code === 0 && output.trim().includes("presentatie.pptx")) {
+            console.log("✅ PowerPoint succesvol gemaakt met echte Unsplash foto's!");
+            res.json({ success: true, url: 'presentatie.pptx' });
+        } else {
+            console.error("❌ VERBORGEN PYTHON MELDING:\n", output);
+            res.status(500).json({ success: false, error: output || errorOutput });
+        }
+    });
+
+    pythonProcess.stdin.write(JSON.stringify({ proposal, stijl }));
+    pythonProcess.stdin.end();
 });
  
 // ==========================================
